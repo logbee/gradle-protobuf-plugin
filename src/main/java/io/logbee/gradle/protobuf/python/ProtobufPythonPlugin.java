@@ -18,9 +18,9 @@ import org.gradle.api.tasks.TaskProvider;
 
 import java.io.File;
 
+import static io.logbee.gradle.protobuf.Backend.Python;
 import static io.logbee.gradle.protobuf.ProtobufPlugin.PROTOC_CONFIGURATION_NAME;
 import static io.logbee.gradle.protobuf.ProtobufProviderPlugin.PROTOBUF_SOURCESET_NAME;
-import static io.logbee.gradle.protobuf.Backend.Python;
 import static io.logbee.gradle.protobuf.tasks.TaskNames.*;
 
 public class ProtobufPythonPlugin implements Plugin<Project> {
@@ -35,7 +35,7 @@ public class ProtobufPythonPlugin implements Plugin<Project> {
         sourceSets.all(sourceSet -> {
 
             final SourceDirectorySet protoSourceDirectorySet = (SourceDirectorySet) sourceSet.getExtensions().getByName(PROTOBUF_SOURCESET_NAME);
-            final Configuration configuration = project.getConfigurations().getByName(ProtobufProviderPlugin.PROTOBUF_GENERATE_CONFIGURATION_NAME);
+            final Configuration generateConfiguration = project.getConfigurations().getByName(ProtobufProviderPlugin.PROTOBUF_GENERATE_CONFIGURATION_NAME);
 
             final TaskProvider<PrepareProtobufTask> prepareSourcesTask = project.getTasks().register(getPrepareSourcesTaskName(sourceSet, Python), PrepareProtobufTask.class, task -> {
 
@@ -44,6 +44,7 @@ public class ProtobufPythonPlugin implements Plugin<Project> {
                 task.setDestinationDirectory(new File(project.getBuildDir(), "protobuf/" + Python.getSourceDirectoryName() + "/src/" + sourceSet.getName() + "/proto"));
                 task.setRewritePackage(protobufExtension.getPython().getRewritePackage());
                 task.prepare(protoSourceDirectorySet.getSourceDirectories());
+                task.prepare(generateConfiguration);
             });
 
             final TaskProvider<PrepareProtobufTask> prepareIncludesTask = project.getTasks().register(getPrepareIncludesTaskName(sourceSet, Python), PrepareProtobufTask.class, task -> {
@@ -74,12 +75,9 @@ public class ProtobufPythonPlugin implements Plugin<Project> {
             for (Dependency dependency : dependencies.getDependencies()) {
                 if (dependency instanceof ProjectDependency) {
                     final Project dependencyProject = ((ProjectDependency) dependency).getDependencyProject();
-                    final Configuration providedConfiguration = dependencyProject.getConfigurations().getByName(ProtobufProviderPlugin.PROTOBUF_PROVIDED_CONFIGURATION_NAME);
                     final Configuration includeConfiguration = dependencyProject.getConfigurations().getByName(ProtobufProviderPlugin.PROTOBUF_INCLUDE_CONFIGURATION_NAME);
-                    final PrepareProtobufTask prepareSourcesTask = (PrepareProtobufTask) project.getTasks().getByName(getPrepareSourcesTaskName(mainSourceSet, Python));
                     final PrepareProtobufTask prepareIncludesTask = (PrepareProtobufTask) project.getTasks().getByName(getPrepareIncludesTaskName(mainSourceSet, Python));
 
-                    prepareSourcesTask.prepare(providedConfiguration.getOutgoing().getArtifacts().getFiles());
                     prepareIncludesTask.prepare(includeConfiguration.getFiles());
                 }
                 else if (dependency instanceof ExternalModuleDependency) {

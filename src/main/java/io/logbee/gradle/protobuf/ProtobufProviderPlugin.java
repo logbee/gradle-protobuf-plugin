@@ -1,5 +1,6 @@
 package io.logbee.gradle.protobuf;
 
+import io.logbee.gradle.protobuf.configuration.ProtobufElements;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -17,6 +18,9 @@ import org.gradle.plugins.ide.idea.model.IdeaModel;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.Collections;
+
+import static io.logbee.gradle.protobuf.configuration.ProtobufElements.PROTOBUF_ATTRIBUTE;
+import static io.logbee.gradle.protobuf.configuration.ProtobufElements.PROTOBUF_SOURCES;
 
 public class ProtobufProviderPlugin implements Plugin<Project> {
 
@@ -76,6 +80,7 @@ public class ProtobufProviderPlugin implements Plugin<Project> {
             configuration.setExtendsFrom(Collections.emptyList());
             configuration.setCanBeResolved(true);
             configuration.setCanBeConsumed(false);
+            configuration.getAttributes().attribute(PROTOBUF_ATTRIBUTE, objectFactory.named(ProtobufElements.class, PROTOBUF_SOURCES));
         });
 
         final Configuration providedConfiguration = project.getConfigurations().create(PROTOBUF_PROVIDED_CONFIGURATION_NAME, configuration -> {
@@ -84,6 +89,7 @@ public class ProtobufProviderPlugin implements Plugin<Project> {
             configuration.setExtendsFrom(Collections.emptyList());
             configuration.setCanBeResolved(false);
             configuration.setCanBeConsumed(true);
+            configuration.getAttributes().attribute(PROTOBUF_ATTRIBUTE, objectFactory.named(ProtobufElements.class, PROTOBUF_SOURCES));
         });
 
         final Configuration includeConfiguration = project.getConfigurations().create(PROTOBUF_INCLUDE_CONFIGURATION_NAME, configuration -> {
