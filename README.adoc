@@ -1,4 +1,4 @@
-:version: 0.1.0
+:version: 0.2.0
 
 = Gradle Protobuf Plugin =
 
@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Apache 2.0 License">
 </a>
 <a href="https://github.com/logbee/gradle-protobuf-plugin/releases">
-    <img src="https://img.shields.io/badge/Version-0.1.0-green" alt="Version 0.1.0">
+    <img src="https://img.shields.io/badge/Version-0.2.0-green" alt="Version 0.2.0">
 </a>
 ++++
 
