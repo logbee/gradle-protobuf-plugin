@@ -6,7 +6,7 @@ import org.gradle.api.attributes.CompatibilityCheckDetails;
 import static io.logbee.gradle.protobuf.configuration.ProtobufElements.PROTOBUF_SOURCES;
 
 
-class ProtobufArchiveRule implements AttributeCompatibilityRule<ProtobufElements> {
+public class ProtobufArchiveRule implements AttributeCompatibilityRule<ProtobufElements> {
 
     @Override
     public void execute(CompatibilityCheckDetails<ProtobufElements> details) {

@@ -1,5 +1,6 @@
 package io.logbee.gradle.protobuf;
 
+import io.logbee.gradle.protobuf.configuration.ProtobufArchiveRule;
 import io.logbee.gradle.protobuf.configuration.ProtobufElements;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -110,6 +111,10 @@ public class ProtobufProviderPlugin implements Plugin<Project> {
             task.getArchiveBaseName().set(project.getName());
             task.getArchiveClassifier().set("protobuf");
             task.setCompression(Compression.NONE);
+        });
+
+        project.getDependencies().getAttributesSchema().attribute(PROTOBUF_ATTRIBUTE, attribute -> {
+            attribute.getCompatibilityRules().add(ProtobufArchiveRule.class);
         });
 
         providedConfiguration.getOutgoing().artifact(archiveProtobuf);
